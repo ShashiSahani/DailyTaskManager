@@ -1,4 +1,4 @@
-# === Node.js (backend) ===
+# === Node.js (server) ===
 node_modules/
 .env
 .env.*
@@ -7,15 +7,15 @@ logs/
 package-lock.json
 dist/
 build/
-backend/.gitignore
+server/.gitignore
 
-# === React (frontend) ===
-frontend/node_modules/
-frontend/dist/
-frontend/build/
-frontend/.env
-frontend/.env.*
-frontend/.gitignore
+# === React (client) ===
+client/node_modules/
+client/dist/
+client/build/
+client/.env
+client/.env.*
+client/.gitignore
 
 # === General OS / IDE files ===
 .DS_Store
