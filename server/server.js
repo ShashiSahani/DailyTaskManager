@@ -12,7 +12,9 @@ connectDB()
 const app=express();
 app.use(express.json());
 
-
+app.get('/', (req, res) => {
+  res.send('Welcome to the Task API');
+});
 app.use('/api/v1/tasks',taskRoute);
 app.use((err, req, res, next) => {
     console.error(err.stack);
