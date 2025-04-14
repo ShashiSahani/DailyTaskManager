@@ -5,6 +5,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 
 import taskRoute from './routes/taskRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -15,9 +16,11 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
+  console.log("Welcome to the Task API")
   res.send('Welcome to the Task API');
 });
 app.use('/api/v1/tasks',taskRoute);
+app.use('/api/v1/users',userRoutes);
 app.use((err, req, res, next) => {
     console.error(err.stack);
   

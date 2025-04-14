@@ -1,56 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { addTask, deleteTask, fetchTasks, updateTask } from '../features/tasks/taskSlice';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTasks, deleteTask } from '../features/tasks/taskSlice';
+import ToggleSwitch from '../comman/ToggleSwitch';
+import DataTable from '../comman/DataTable';
 
-function TaskList() {
+const TaskList = () => {
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.tasks.items);
 
-    const [title,setTitle]=useState("");
-    const dispatch=useDispatch();
-    const {item:tasks,loading,error}=useSelector((state)=>state.tasks)
-    useEffect(() => {
-        dispatch(fetchTasks()).then((res) => {
-          console.log('Fetched Tasks:', res.payload); // ✅ Log tasks after fetching
-        });
-      }, [dispatch]);
-  const handleAdd = () => {
-    if (title.trim()) {
-      dispatch(addTask({ title, completed: false }));
-      setTitle('');
-    }
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    dispatch(deleteTask(id));
   };
 
-  const toggleTask = (task) => {
-    dispatch(updateTask({ ...task, completed: !task.completed }));
-  };
-    return (
-        <div>
-        <h2>Task Manager</h2>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter new task"
+  const columns = [
+    {
+      accessorKey: 'title',
+      header: 'Title',
+    },
+    {
+      accessorKey: 'completed',
+      header: 'Status',
+      cell: ({ row }) => (
+        <ToggleSwitch
+          checked={row.original.completed}
+          id={row.original._id}
+          endpoint="https://dailytaskmanager-zi3k.onrender.com/api/v1/tasks"
+          onUpdate={(updated) => console.log('Updated:', updated)}
         />
-        <button onClick={handleAdd}>Add Task</button>
-  
-        {loading && <p>Loading tasks...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-  
-        <ul>
-          {tasks?.map((task) => (
-            <li key={task._id}>
-              <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
-                {task.title}
-              </span>
-              <button onClick={() => toggleTask(task)}>
-                {task.completed ? 'Undo' : 'Complete'}
-              </button>
-              <button onClick={() =>
-                 dispatch(deleteTask(task._id))}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
-export default TaskList
+      ),
+    },
+    {
+      header: 'Actions',
+      cell: ({ row }) => (
+        <button
+          className="bg-red-500 text-white px-2 py-1 rounded"
+          onClick={() => handleDelete(row.original._id)}
+        >
+          Delete
+        </button>
+      ),
+    },
+  ];
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4">Task Admin Panel</h1>
+      <DataTable columns={columns} data={tasks} />
+    </div>
+  );
+};
+
+export default TaskList;

@@ -12,9 +12,14 @@ export const addTask = createAsyncThunk("tasks/addTask", async (task) => {
   const res = await axios.post(API_URL, task);
   return res.data;
 });
-export const deleteTask = createAsyncThunk("tasks/deleteTask", async (id) => {
-  await axios.delete(`${API_URL}${id}`);
-  return id;
+export const deleteTask = createAsyncThunk("tasks/deleteTask", async (id, thunkAPI) => {
+  try {
+    await axios.delete(`${API_URL}/${id}`);
+    return id;
+  } catch (error) {
+    console.error("Delete error:", error);
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
 });
 
 export const updateTask = createAsyncThunk("tasks/updateTask", async (task) => {
